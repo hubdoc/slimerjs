@@ -9,24 +9,26 @@ SET __SLIMER_ARGS=%*
 SET __SLIMER_ENV=
 
 SET CREATETEMP=Y
+SET HIDE_ERRORS=Y
 
 REM check arguments
 FOR %%A IN (%*) DO (
 
     if ["%%A"]==["/?"] (
         call :helpMessage
-        pause
-        exit 0
+        goto :eof
     )
     if /I ["%%A"]==["--help"] (
         call :helpMessage
-        pause
-        exit 0
+        goto :eof
     )
     if /I ["%%A"]==["-h"] (
         call :helpMessage
-        pause
-        exit 0
+        goto :eof
+    )
+    if /I ["%%A"]==["/h"] (
+        call :helpMessage
+        goto :eof
     )
     if /I ["%%A"]==["-reset-profile"] (
         SET CREATETEMP=
@@ -57,6 +59,9 @@ FOR %%A IN (%*) DO (
     )
     if /I ["%%A"]==["--profilemanager"] (
         SET CREATETEMP=
+    )
+    if /I ["%%A"]==["/debug"] (
+        SET HIDE_ERRORS=
     )
 )
 
@@ -108,6 +113,11 @@ REM FIXME: an other solution to redirect directly to the console ?
 set TMPFILE=%TMP%\slimer-output-%RANDOM%.tmp
 
 %SLIMERJSLAUNCHER% -app "%SLIMERDIR%application.ini" %PROFILE% -no-remote %__SLIMER_ARGS% >%TMPFILE% 2>&1
+if ["%HIDE_ERRORS%"]==[""] (
+    %SLIMERJSLAUNCHER% -app "%SLIMERDIR%application.ini" %PROFILE% -attach-console -no-remote %__SLIMER_ARGS%
+) ELSE (
+    %SLIMERJSLAUNCHER% -app "%SLIMERDIR%application.ini" %PROFILE% -attach-console -no-remote %__SLIMER_ARGS% 2>NUL
+)
 
 if ["%CREATETEMP%"]==["Y"] (
      rmdir /S /Q %PROFILEDIR%

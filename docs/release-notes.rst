@@ -117,6 +117,7 @@ New API
 - Implementation of ``webpage.scrollPosition``
 - Implementation of ``webpage.offlineStoragePath`` and  ``webpage.offlineStorageQuota``
 
+
 Fixed bugs
 ----------
 
